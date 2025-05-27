@@ -223,7 +223,7 @@ export default withLeaflet(class HeatmapLayer extends MapLayer {
   }
 
   fitBounds(): void {
-    const points = this.props.points;
+    const { points } = this.props;
     const lngs = map(points, this.props.longitudeExtractor);
     const lats = map(points, this.props.latitudeExtractor);
     const ne = { lng: max(lngs), lat: max(lats) };
@@ -257,19 +257,17 @@ export default withLeaflet(class HeatmapLayer extends MapLayer {
     }
   }
 
-
   _animateZoom(e: LeafletZoomEvent): void {
     const scale = this.props.leaflet.map.getZoomScale(e.zoom);
     const offset = this.props.leaflet.map
-                      ._getCenterOffset(e.center)
-                      ._multiplyBy(-scale)
-                      .subtract(this.props.leaflet.map._getMapPanePos());
+      ._getCenterOffset(e.center)
+      ._multiplyBy(-scale)
+      .subtract(this.props.leaflet.map._getMapPanePos());
 
     if (L.DomUtil.setTransform) {
       L.DomUtil.setTransform(this._el, offset, scale);
     } else {
-      this._el.style[L.DomUtil.TRANSFORM] =
-          `${L.DomUtil.getTranslateString(offset)} scale(${scale})`;
+      this._el.style[L.DomUtil.TRANSFORM] = `${L.DomUtil.getTranslateString(offset)} scale(${scale})`;
     }
   }
 
@@ -298,17 +296,14 @@ export default withLeaflet(class HeatmapLayer extends MapLayer {
     const size = this.props.leaflet.map.getSize();
 
     const maxIntensity = this.props.max === undefined
-                            ? 1
-                            : this.getMax(this.props);
+      ? 1
+      : this.getMax(this.props);
 
     const maxZoom = this.props.maxZoom === undefined
-                        ? this.props.leaflet.map.getMaxZoom()
-                        : this.getMaxZoom(this.props);
+      ? this.props.leaflet.map.getMaxZoom()
+      : this.getMaxZoom(this.props);
 
-    const v = 1 / Math.pow(
-      2,
-      Math.max(0, Math.min(maxZoom - this.props.leaflet.map.getZoom(), 12)) / 2
-    );
+    const v = 1 / 2 ** (Math.max(0, Math.min(maxZoom - this.props.leaflet.map.getZoom(), 12)) / 2);
 
     const cellSize = r / 2;
     const panePos = this.props.leaflet.map._getMapPanePos();
@@ -320,10 +315,11 @@ export default withLeaflet(class HeatmapLayer extends MapLayer {
 
     const inBounds = (p, bounds) => bounds.contains(p);
 
-    const filterUndefined = (row) => filter(row, c => c !== undefined);
+    const filterUndefined = (row) => filter(row, (c) => c !== undefined);
 
-    const roundResults = (results) => reduce(results, (result, row) =>
-      map(filterUndefined(row), (cell) => [
+    const roundResults = (results) => reduce(
+      results,
+      (result, row) => map(filterUndefined(row), (cell) => [
         Math.round(cell[0]),
         Math.round(cell[1]),
         Math.min(cell[2], maxIntensity),
@@ -368,12 +364,12 @@ export default withLeaflet(class HeatmapLayer extends MapLayer {
     const getBounds = () => new L.Bounds(L.point([-r, -r]), size.add([r, r]));
 
     const getDataForHeatmap = (points, leafletMap) => roundResults(
-        accumulateInGrid(
-          points,
-          leafletMap,
-          getBounds(leafletMap)
-        )
-      );
+      accumulateInGrid(
+        points,
+        leafletMap,
+        getBounds(leafletMap)
+      )
+    );
 
     const data = getDataForHeatmap(this.props.points, this.props.leaflet.map);
 
@@ -392,7 +388,6 @@ export default withLeaflet(class HeatmapLayer extends MapLayer {
       );
     }
   }
-
 
   render(): React.Element {
     return null;
