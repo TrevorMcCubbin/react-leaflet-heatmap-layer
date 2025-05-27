@@ -4,9 +4,9 @@
   "description": "A custom layer for heatmaps in react-leaflet",
   "main": "lib/HeatmapLayer.js",
   "scripts": {
-    "compile": "npm run clean; npm run transpile",
-    "transpile": "./node_modules/.bin/babel src/HeatmapLayer.js --out-file lib/HeatmapLayer.js",
-    "clean": "rm -rf ./lib/*",
+    "compile": "npm run clean && npm run transpile",
+    "transpile": "npx mkdirp lib && npx babel src/HeatmapLayer.js --out-file lib/HeatmapLayer.js",
+    "clean": "rimraf ./lib",
     "example": "webpack-dev-server --config ./example/webpack.config.js",
     "lint": "eslint ./src ./example/index.js",
     "lint:fix": "eslint ./src ./example/index.js --fix"
@@ -52,11 +52,13 @@
     "eslint-plugin-lean-imports": "^0.3.3",
     "eslint-plugin-react": "^7.37.5",
     "leaflet": "^1.0.3",
+    "mkdirp": "^3.0.1",
     "prop-types": "^15.5.10",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
     "react-transform-hmr": "^1.0.4",
+    "rimraf": "^6.0.1",
     "webpack": "^1.12.15",
     "webpack-dev-server": "^1.14.1"
   },
